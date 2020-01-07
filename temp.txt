@@ -1,0 +1,260 @@
+**********************************************************************************************
+// 1 - 10                                         	      
+**********************************************************************************************
+Graph
+// 1129 (LI814). Shortest Path with Alternating Colors
+// 思路:
+    // build graph
+    // shortest path, unweighted => BFS => Queue, Visited
+// 技巧: 
+    // int[][] adjacent matrix记录 directed graph
+    // 多用一个维度记录color
+// 失败总结:
+    // adjacent matrix如何explore neighbors: 从0～n全部列一遍
+    // 因为queue有两个维度, 所以visited也要有两个维度, 但也要查res是否MAX因为只能改一次
+// T = O(n^2)
+// S = O(n^2) 
+
+
+// 743. Network Delay Time && 787. Cheapest Flights Within K Stops
+// 思路 (743): shortest path, weighted
+    // Bellman-Ford: relax edges |V|-1 times
+        // T = O(NE) 
+        // S = O(N)
+    // Dijkstra: 
+        // 失败总结: 只有在确定距离后才能mark visited
+        // T = O(NlogN + E)
+        // S = O(N+E)
+// 思路 (787): shortest path, weighted
+    // 跟743一样无非增加限制条件
+// T = O(VlogV + E)
+// S = O(V+E)
+
+
+// 785 (886). Is Graph Bipartite? && 1042. Flower Planting With No Adjacent && 863. All Nodes Distance K in Binary Tree
+// 思路 (886): 
+    // undirected unweight graph, 没有自环和平行边
+// 失败总结: 
+    // disconnected components - 所以要遍历color arr
+    // 用color arr代替visited
+// T = O(|N|+|E|) N - #of vertex
+// S = O(N)
+
+// 思路 (1042): 
+    // 遍历每个Node, 把它邻居颜色删掉就可以assign颜色了
+// 失败总结: 
+    // 暴力BFS, 存在disconnected components - 所以要遍历color arr
+// T = O(V+E)
+// S = O(V)
+
+
+// 332. Reconstruct Itinerary && 1059. All Paths from Source Lead to Destination && 399. Evaluate Division && 1192. Critical Connections in a Network
+// 思路 (332): 
+    // 欧拉路径一笔画问题 
+// Brute Force: 
+    // 以JFK开头的路径做permutation, 返回第一个长度达到的
+    // 如何做permutation? 把option list拿下来, 加入i到res, list移走i; list加入i, 减去i从res
+    // T = O(nlogn+n!)
+    // S = O(n)
+// 欧拉路径: 
+    // a path visits every E exactly once - 按一定顺序进行, 使得不用unmark访问过的边, T = O(n)
+    // **只要_u_存在未访问边(u, v), 先DFS(v)**
+    // T = O(nlogn)
+    // S = O(n)
+
+// 失败总结 (1059): 
+    // 停止条件: curNode不在graph.keySet中了
+    // 如何检测环: if **revisit**
+// T = O(V+E)
+// S = O(V+E)
+
+// 失败总结 (399): 
+    // 得算出来subres, 如果subres valid, return subres 不能return weight
+    // no need to unmark, b/c every time starts fresh
+// T = |E|+|E|*|n| E as equations.length, n as queries' length, 
+// S = |E+n|
+
+// 思路(1192): 找critical connection / articulation points:
+    // low meaning: highest exit from u or u’s subtree
+    // node id you come from < low you are going to => critical
+    // initialization: dfsNum = -1 for all; dfsCounter 
+    // dfs(u): 
+        // u.dfsNum u.low
+        // for each edge (u, v)
+            // if v’s u parent continue
+            // if v not visited
+                // dfs(v)
+                // u.low = min u.low, v.low
+                // if u.dfsNum < v.low => (u, v) is critical
+            // else 
+                // u.low = min u.low, v.dfsNum
+// T = O(V+E)
+// S = O(V+E)
+
+
+// 310. Minimum Height Trees && 269 (210). Alien Dictionary && 444. Sequence Reconstruction 
+// Topo: T = O(|E|+|V|), S = O(n)
+// 失败总结 (310): 
+    // ArrayList remove T = O(n), 
+    // list.remove(int) 删的是index; 
+    // list.remove(Integer)删的是list里第一个num
+
+// 失败总结 (269): 
+    // za, zbaaaa 一个单词alone无法比较, 只能说明前后两个比较顺序a-b
+    // abc, abca 不能说明顺序
+    // wrt, wrf; 只能说明顺序t-f, 但必须**把wr也录入到graph之中**
+    // ["wnlb"] 只有一个单词, 所以最好先把所有V都取出来, 然后再在上边加E
+// T = O(|V|+|E|) = O(n*k) n as # of words, k as ave leng per word
+// S = O(26)
+
+// 失败总结 (444): 
+    // 用Map<Int, SET<Int>> 避免重复
+    // [1, 2], [1, 3] 把2, 3都要加进graph中去
+    // size为1时还要check是否出现过 否则 [1, 2, 3, 4, 5], [1] 会overwrite
+    // T = O(|V|+|E|)
+    // S = O(|V|+|E|)
+
+
+// 133 (138). Clone Graph
+// 总结: 
+    // DFS - 体会recursion的含义
+    // BFS - 把所有vertices整合到一起就可以用map.get()了
+// T = O(V+E)
+// S = O(V)
+
+
+// 149 (447 356 1232). Max Points on a Line
+// 总结: 
+    // gcd (a, b) 
+        // if b == 0 return a
+        // return gcd (b, a%b)	
+
+
+// 126 (127 433). Word Ladder II
+// 思路: 
+    // BFS建图, DFS生成结果
+    // optimization: 
+        // startSet grows larger and larger, more transformation need
+        // 因为我们只是从startSet修改进入下一个level, 所以let startSet be the smaller size
+        // reverse过后, map-relation also needs to be reversed
+// 注意: 
+    // remove used words from list
+// T = O(n*26^l) - l as 单词长度; n as wordList length
+// S = O(n+k*m) - k= #of paths; m as ave path length
+// bidirectional 
+// T = O(n*26^(l/2))
+// S = O(n+k*m)
+
+***************************************************************************************
+// 11 - 20                                         	      
+***************************************************************************************
+Union Find
+// 685 (261 323 684 547). Redundant Connection II 
+
+
+// 1135. Connecting Cities With Minimum Cost
+// 思路: Kruskal (UnionFind+贪心)
+    // 每次选择具有最小权重, 且两顶点还未连通的边
+// T = O(ElogE) - E as # of edges
+// S = O(N)
+
+
+// 305 (200). Number of Islands II
+// 注意: 
+    // parent 初始化为-1时, find中要加corner case
+    // set() 返回boolean
+// T = O(k amortized(mn)) - k: length of positions
+// S = O(mn)
+
+
+// 734 737 721
+
+2D Array
+// 1293 (542 286 994 1162 296 317 329 1219). Shortest Path in a Grid with Obstacles Elimination && 1102. Path With Maximum Minimum Value
+// 有两种方法update新坐标:
+    // A[newI][newJ] 比较 A[i][j]+1 注意MAX+1会越界
+    // 遇到 A[newI][newJ] == MAX 直接改, 利用BFS性质
+// 思路 (317): 每个1的位置跑一次BFS, update #of can reach and dist
+// 思路 (329): meaning of visited[I][j], visited数组做memo
+// 思路 (1219): unmark visited; T = O(25*4*3^24)
+// 思路 (1102): 
+    // (i, j, w) - w: min of the path
+    // 拿题中例子, each time only compares 5, 4 和 5, 1, 不能541一起比
+// T = O(nlog(n)) - n as path length
+// S = O(n) 
+// 思路 (1293): 
+    // visited[i][j]: min #of obstacles to reach (i, j)
+    // (i, j, w): path (0, 0) to (i, j) that has w obstacles 
+    // invalid: 路径上障碍物达到上限 || 到达(newI, newJ)路径消除次数不是更少 希望到达(newI, newJ)步数最少
+// T = O(mnk)
+// S = O(mnk)
+    // for each cell, wst case put that cell into queue k times, store all paths in the visited set
+
+
+// 489 (200 694 130 1020 1254 417 1034 79 212 934 59). Robot Room Cleaner
+// 思路 (200): 记录调动次数
+// 注意 (694): 
+    // 1 1 1     1 1 1  这两个都是RRD, 加上回溯part - [RRBBDBB, RRDBBBB]
+    // 1             1   
+    // 不能直接在sb上操作, 只有每次valid时候再贴上direction
+// 注意 (79):  valid放在invalid前 避免word_pos越界; T = O(mn*4*3^L)
+// 注意 (212): 思考递归出口, 用完一个cell需不需要改回; T = O(mn*#of TrieNode)
+// 思路 (934): need 2 break to exit for for; BFS时注意A[i][j] == 0
+// 思路 (489): 未知grid DFS, 如何维持原来的方向
+    // 上-0; 右-1; 下-2; 左-3; (curDir+k) % 4 - 这样 0-0123; 1-1230; 2-2310; 3-3012
+
+Backtracking
+// permutation属于全排列问题顺序matter T(n) = O(An_n)  = n*T(n-1) = O(n!)  S = O(n)
+// [0….n-1]不往回返, pos代表这次访问的起始位置, 每次截取的subarr是[pos…n-1]
+// Complexity: 递归树
+	// 答案总数上限 = 树杈数^层数
+	// T = 答案总数 * 构造每个答案时间
+
+
+// 77 401 78 90 39 40 216 254 60 
+// 思路 (401): 第一步getKNum from arr A 
+// 思路 (254): 达到出口, factor必须走到n, 因为n/n == 1; 保证factor < n? 看size; 层数logn
+// 注意 (60): how to update k (%); T_List.remove = O(n)
+
+// 301. Remove Invalid Parentheses   
+// 注意: 
+    // 用pos的意义: 记录上一个被删的括号位置从它后面才能删
+        // 例子: ")(" - 1,1      如果没有pos
+            // "(" 1,0   ")" 0,1
+            // 0,0     0,0
+        // 例子: )( - 1,1         有pos = 0
+            // "(" 1,0  (pos = 0);   ")" 0,1    (pos = 1)
+            // 0,0                   pos越界不会出现第二个""
+    // 注意去重 - (() 第一个第二个括号只用删一个
+
+// 1258 (17 784 1087). Snonymous Sentences 
+// 注意 (17): 出口可以是 pos == LEN 或者 subres.size == LEN
+
+
+526. Beautiful Arrangement
+
+
+
+
+
+// 51 (36 37). N-Queens && 351. Android Unlock Patterns
+// 注意 (37): 给定(row, col) 遍历所在subgrid - board[3*(row/3)+i/3][3*(col/3)+i%3]  (i从0到9)
+// 思路 (351): 
+    // valid: ne_not_visited && (from_cur_to_ne no mid || mid_has_visit)
+    // how to implement subres
+
+
+// 320 (22). Generalized Abbreviation
+
+
+// 140 (291). Word Break II
+// 注意 (291): 
+    // 层数O(pattern.length) => T 上限O(n^层数) n as str.length
+    // boolean startsWith(prefix) boolean startsWith(prefix, offset)
+// 注意 (140): 
+    // properly mark the end, ow next.size == 0, String has no chance to append
+// T = O(2^n)
+// S = O(2^n)
+
+
+
